@@ -10,6 +10,9 @@ env:
 jobs:
   dependencies:
     runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.key }}
+      cache-path: ${{ steps.cache-key.outputs.path }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

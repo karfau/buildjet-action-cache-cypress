@@ -71,9 +71,11 @@ jobs:
         run: |
           set -x
           echo '${{ needs.dependencies.outputs.cache-path }}'
-          # taken from the cache action output
-          du -ch /home/runner/actions-runner/_work/buildjet-action-cache-cypress/buildjet-action-cache-cypress
+          du -ch --max-depth=5 "$(pnpm store path)"
+          du -ch --max-depth=5 ./node_modules
           du -ch --max-depth=5 $CYPRESS_CACHE_FOLDER
+          # taken from the cache action output
+          du -ch --max-depth=5 /home/runner/actions-runner
 
   restore-cache-working:
     runs-on: ubuntu-latest
@@ -97,6 +99,8 @@ jobs:
         run: |
           set -x
           echo '${{ needs.dependencies.outputs.cache-path }}'
-          # taken from the cache action output
-          du -ch /home/runner/actions-runner/_work/buildjet-action-cache-cypress/buildjet-action-cache-cypress
+          du -ch --max-depth=5 "$(pnpm store path)"
+          du -ch --max-depth=5 ./node_modules
           du -ch --max-depth=5 $CYPRESS_CACHE_FOLDER
+          # taken from the cache action output
+          du -ch --max-depth=5 /home/runner/actions-runner

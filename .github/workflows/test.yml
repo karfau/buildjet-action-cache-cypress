@@ -20,7 +20,6 @@ jobs:
           node-version-file: '.nvmrc'
       # https://github.com/nodejs/corepack?tab=readme-ov-file#corepack-enable--name
       - run: corepack enable && corepack install
-      - run: mkdir -p $CYPRESS_CACHE_FOLDER
       - name: Calculate cache-key
         id: cache-key
         run: |
@@ -58,7 +57,7 @@ jobs:
           node-version-file: '.nvmrc'
       # https://github.com/nodejs/corepack?tab=readme-ov-file#corepack-enable--name
       - run: corepack enable && corepack install
-      - run: mkdir -p $CYPRESS_CACHE_FOLDER
+      - run: mkdir -p /home/runner/.cache
       - name: Restore dependencies cache
         uses: buildjet/cache@v4
         timeout-minutes: 1
@@ -70,6 +69,7 @@ jobs:
         run: |
           set -x
           du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
+          
 
   restore-cache-working:
     runs-on: ubuntu-latest

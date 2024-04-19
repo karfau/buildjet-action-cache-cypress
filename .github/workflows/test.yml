@@ -19,7 +19,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       # https://github.com/nodejs/corepack?tab=readme-ov-file#corepack-enable--name
-      - run: corepack install
+      - run: corepack enable && corepack install
       - run: mkdir -p $CYPRESS_CACHE_FOLDER
       - name: Calculate cache-key
         id: cache-key
@@ -56,7 +56,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       # https://github.com/nodejs/corepack?tab=readme-ov-file#corepack-enable--name
-      - run: corepack enable
+      - run: corepack enable && corepack install
       - run: mkdir -p $CYPRESS_CACHE_FOLDER
       - name: Restore dependencies cache
         uses: buildjet/cache@v4
@@ -80,7 +80,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       # https://github.com/nodejs/corepack?tab=readme-ov-file#corepack-enable--name
-      - run: corepack enable
+      - run: corepack enable && corepack install
       - run: mkdir -p $CYPRESS_CACHE_FOLDER
       - name: Restore dependencies cache
         uses: buildjet/cache@v4

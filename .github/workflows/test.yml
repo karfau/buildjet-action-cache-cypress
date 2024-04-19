@@ -25,10 +25,10 @@ jobs:
         id: cache-key
         run: |
           set +x
-          echo 'key=${{ runner.os }}-dependencies-v2-${{ hashFiles('./pnpm-lock.yaml', 'pnpm-workspace.yaml', './.nvmrc') }}' | tee -a "$GITHUB_OUTPUT"
+          echo 'key=${{ runner.os }}-dependencies-v1-${{ hashFiles('./pnpm-lock.yaml', 'pnpm-workspace.yaml', './.nvmrc') }}' | tee -a "$GITHUB_OUTPUT"
           echo "path<<END_OF_PATH" >> "$GITHUB_OUTPUT"
           echo "$(pnpm store path)" >> "$GITHUB_OUTPUT"
-          echo "CYPRESS_CACHE_FOLDER" >> "$GITHUB_OUTPUT"
+          echo "$CYPRESS_CACHE_FOLDER" >> "$GITHUB_OUTPUT"
           echo "./node_modules" >> "$GITHUB_OUTPUT"
           echo "END_OF_PATH" >> "$GITHUB_OUTPUT"
           cat "$GITHUB_OUTPUT"
@@ -44,7 +44,8 @@ jobs:
         run: |
           set -o pipefail
           pnpm install --frozen-lockfile | tee ./install.log
-          du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
+
+      - run: du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
 
   restore-cache-failing:
     runs-on: buildjet-2vcpu-ubuntu-2204
@@ -81,7 +82,7 @@ jobs:
           node-version-file: '.nvmrc'
       # https://github.com/nodejs/corepack?tab=readme-ov-file#corepack-enable--name
       - run: corepack enable && corepack install
-      - run: mkdir -p $CYPRESS_CACHE_FOLDER
+#      - run: mkdir -p $CYPRESS_CACHE_FOLDER
       - name: Restore dependencies cache
         uses: buildjet/cache@v4
         timeout-minutes: 1

@@ -65,7 +65,7 @@ jobs:
           node-version-file: '.nvmrc'
       # https://github.com/nodejs/corepack?tab=readme-ov-file#corepack-enable--name
       - run: corepack enable && corepack install
-      - run: mkdir -p /home/runner/.cache
+      - run: mkdir -p $CYPRESS_CACHE_FOLDER
       - name: Restore dependencies cache
         uses: buildjet/cache@v4
         timeout-minutes: 1

@@ -25,7 +25,7 @@ jobs:
         id: cache-key
         run: |
           set +x
-          echo 'key=${{ runner.os }}-dependencies-v1-${{ hashFiles('./pnpm-lock.yaml', 'pnpm-workspace.yaml', './.nvmrc') }}' | tee -a "$GITHUB_OUTPUT"
+          echo 'key=${{ runner.os }}-dependencies-v2-${{ hashFiles('./pnpm-lock.yaml', 'pnpm-workspace.yaml', './.nvmrc') }}' | tee -a "$GITHUB_OUTPUT"
           echo "path<<END_OF_PATH" >> "$GITHUB_OUTPUT"
           echo "$(pnpm store path)" >> "$GITHUB_OUTPUT"
           echo "CYPRESS_CACHE_FOLDER" >> "$GITHUB_OUTPUT"

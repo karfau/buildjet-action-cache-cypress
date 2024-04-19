@@ -43,11 +43,12 @@ jobs:
         run: |
           set -o pipefail
           pnpm install --frozen-lockfile | tee ./install.log
+          du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
 
       - name: 'check cypress cache'
         run: |
           set -x
-          du -ch --max-depth=5 $CYPRESS_CACHE_FOLDER
+          du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
 
   restore-cache-failing:
     runs-on: buildjet-2vcpu-ubuntu-2204

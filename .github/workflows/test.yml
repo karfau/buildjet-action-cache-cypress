@@ -39,7 +39,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           set -o pipefail
-          pnpm run ci | tee ./install.log
+          pnpm install --frozen-lockfile | tee ./install.log
 
       - name: 'check cypress cache'
         run: |

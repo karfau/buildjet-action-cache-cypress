@@ -5,7 +5,8 @@ on:
   workflow_dispatch:
 
 env:
-  CYPRESS_CACHE_FOLDER: .cache/Cypress
+  CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
+  CYPRESS_CACHE_COPY: .cache/Cypress
 
 jobs:
   dependencies:
@@ -27,7 +28,7 @@ jobs:
           echo 'key=${{ runner.os }}-dependencies-v1-${{ hashFiles('./pnpm-lock.yaml', 'pnpm-workspace.yaml', './.nvmrc') }}' | tee -a "$GITHUB_OUTPUT"
           echo "path<<END_OF_PATH" >> "$GITHUB_OUTPUT"
           echo "$(pnpm store path)" >> "$GITHUB_OUTPUT"
-          echo "$CYPRESS_CACHE_FOLDER" >> "$GITHUB_OUTPUT"
+          echo "$CYPRESS_CACHE_COPY" >> "$GITHUB_OUTPUT"
           echo "./node_modules" >> "$GITHUB_OUTPUT"
           echo "END_OF_PATH" >> "$GITHUB_OUTPUT"
           cat "$GITHUB_OUTPUT"
@@ -44,11 +45,8 @@ jobs:
           set -o pipefail
           pnpm install --frozen-lockfile | tee ./install.log
           du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
+          cp -r $CYPRESS_CACHE_FOLDER $CYPRESS_CACHE_COPY
 
-      - name: 'check cypress cache'
-        run: |
-          set -x
-          du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
 
   restore-cache-failing:
     runs-on: buildjet-2vcpu-ubuntu-2204
@@ -71,6 +69,8 @@ jobs:
       - name: 'check cypress cache'
         run: |
           set -x
+          ls -altr
+          cp -r $CYPRESS_CACHE_COPY $CYPRESS_CACHE_FOLDER
           echo '${{ needs.dependencies.outputs.cache-path }}'
           du -ch --max-depth=2 "$(pnpm store path)"
           du -ch --max-depth=2 ./node_modules
@@ -97,6 +97,8 @@ jobs:
       - name: 'check cypress cache'
         run: |
           set -x
+          ls -altr
+          cp -r $CYPRESS_CACHE_COPY $CYPRESS_CACHE_FOLDER
           echo '${{ needs.dependencies.outputs.cache-path }}'
           du -ch --max-depth=2 "$(pnpm store path)"
           du -ch --max-depth=2 ./node_modules

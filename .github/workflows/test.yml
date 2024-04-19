@@ -26,6 +26,7 @@ jobs:
           ABS_LOCAL_CACHE="$(pwd)/.cache/Cypress"
           mkdir -p $ABS_LOCAL_CACHE
           echo "cypress=$ABS_LOCAL_CACHE" >> "$GITHUB_OUTPUT"
+          echo "CYPRESS_CACHE_FOLDER=$ABS_LOCAL_CACHE" >> "$GITHUB_ENV"
           echo 'key=${{ runner.os }}-dependencies-v1-${{ hashFiles('./pnpm-lock.yaml', 'pnpm-workspace.yaml', './.nvmrc') }}' | tee -a "$GITHUB_OUTPUT"
           echo "path<<END_OF_PATH" >> "$GITHUB_OUTPUT"
           echo "$(pnpm store path)" >> "$GITHUB_OUTPUT"
@@ -46,9 +47,8 @@ jobs:
           set -o pipefail
           pnpm install --frozen-lockfile | tee ./install.log
 
-      - env:
-          CYPRESS_CACHE_FOLDER: ${{ steps.cache-key.outputs.cypress }}
-        run: |
+      - run: |
+          set +x
           du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
           pnpm cypress verify
 

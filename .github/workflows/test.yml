@@ -4,13 +4,11 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  CYPRESS_CACHE_FOLDER: /home/runner/.cache/Cypress
-
 jobs:
   dependencies:
     runs-on: ubuntu-latest
     outputs:
+      cypress: ${{ steps.cache-key.outputs.cypress }}
       cache-key: ${{ steps.cache-key.outputs.key }}
       cache-path: ${{ steps.cache-key.outputs.path }}
     steps:
@@ -24,10 +22,14 @@ jobs:
         id: cache-key
         run: |
           set +x
+          pwd
+          ABS_LOCAL_CACHE="$(pwd)/.cache/Cypress"
+          mkdir -p $ABS_LOCAL_CACHE
+          echo "cypress=$ABS_LOCAL_CACHE" >> "$GITHUB_OUTPUT"
           echo 'key=${{ runner.os }}-dependencies-v1-${{ hashFiles('./pnpm-lock.yaml', 'pnpm-workspace.yaml', './.nvmrc') }}' | tee -a "$GITHUB_OUTPUT"
           echo "path<<END_OF_PATH" >> "$GITHUB_OUTPUT"
           echo "$(pnpm store path)" >> "$GITHUB_OUTPUT"
-          echo "$CYPRESS_CACHE_FOLDER" >> "$GITHUB_OUTPUT"
+          echo "$ABS_LOCAL_CACHE" >> "$GITHUB_OUTPUT"
           echo "./node_modules" >> "$GITHUB_OUTPUT"
           echo "END_OF_PATH" >> "$GITHUB_OUTPUT"
           cat "$GITHUB_OUTPUT"
@@ -44,12 +46,18 @@ jobs:
           set -o pipefail
           pnpm install --frozen-lockfile | tee ./install.log
 
-      - run: du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
+      - env:
+          CYPRESS_CACHE_FOLDER: ${{ steps.cache-key.outputs.cypress }}
+        run: |
+          du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
+          pnpm cypress verify
 
   restore-cache-failing:
     runs-on: buildjet-2vcpu-ubuntu-2204
     needs:
       - dependencies
+    env:
+      CYPRESS_CACHE_FOLDER: ${{ needs.dependencies.outputs.cypress }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -69,12 +77,14 @@ jobs:
         run: |
           set -x
           du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
-          
+          pnpm cypress verify
 
   restore-cache-working:
     runs-on: ubuntu-latest
     needs:
       - dependencies
+    env:
+      CYPRESS_CACHE_FOLDER: ${{ needs.dependencies.outputs.cypress }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -94,3 +104,4 @@ jobs:
         run: |
           set -x
           du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
+          pnpm cypress verify

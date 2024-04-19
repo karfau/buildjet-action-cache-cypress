@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env:
-  CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
+  CYPRESS_CACHE_FOLDER: /home/runner/.cache/Cypress
   CYPRESS_CACHE_COPY: .cache/Cypress
 
 jobs:

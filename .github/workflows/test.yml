@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env:
-  CYPRESS_CACHE_FOLDER: /home/runner/.cache/Cypress
+  CYPRESS_CACHE_FOLDER: .cache/Cypress
 
 jobs:
   dependencies:
@@ -71,11 +71,9 @@ jobs:
         run: |
           set -x
           echo '${{ needs.dependencies.outputs.cache-path }}'
-          du -ch --max-depth=5 "$(pnpm store path)"
-          du -ch --max-depth=5 ./node_modules
-          du -ch --max-depth=5 $CYPRESS_CACHE_FOLDER
-          # taken from the cache action output
-          du -ch --max-depth=5 /home/runner/actions-runner
+          du -ch --max-depth=2 "$(pnpm store path)"
+          du -ch --max-depth=2 ./node_modules
+          du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
 
   restore-cache-working:
     runs-on: ubuntu-latest
@@ -99,8 +97,6 @@ jobs:
         run: |
           set -x
           echo '${{ needs.dependencies.outputs.cache-path }}'
-          du -ch --max-depth=5 "$(pnpm store path)"
-          du -ch --max-depth=5 ./node_modules
-          du -ch --max-depth=5 $CYPRESS_CACHE_FOLDER
-          # taken from the cache action output
-          du -ch --max-depth=5 /home/runner/actions-runner
+          du -ch --max-depth=2 "$(pnpm store path)"
+          du -ch --max-depth=2 ./node_modules
+          du -ch --max-depth=2 $CYPRESS_CACHE_FOLDER
